@@ -4,6 +4,11 @@ hospital_vent_icu_data = pd.read_csv("datasets/covid19-epiSummary-hospVentICU.cs
 public_infobase_data = pd.read_csv("datasets/covid19-public-infobase.csv")
 vaccine_distribution_data = pd.read_csv("datasets/covid19-vaccination-distribution.csv")
 
+# Only want to take total hospital occupancy as output label for rest of data from hospital_vent_icu_data
+hospital_vent_icu_data.drop(['BEDCAP_ICU','VENTCAP_ICU','BEDCAP_OTHER','VENTCAP_OTHER',
+'COVID_NEWICU','COVID_ICU','COVID_NEWOTHER','COVID_OTHER','COVID_VENT','VENTCAP_TOTAL','NONCOVID_ICU',
+'NONCOVID_OTHER','NONCOVID_VENT'], axis=1, inplace=True)
+
 # Merging the data sets based on date, only entires that share a date will exist in the final merged set, those that do not will be dropped
 merge_hospital_infobase = pd.merge(hospital_vent_icu_data, public_infobase_data, on =['date'])
 merge_hospital_infobase_vaccine = pd.merge(merge_hospital_infobase, vaccine_distribution_data, on =['date', 'prname'])
@@ -19,8 +24,7 @@ merge_hospital_infobase_vaccine.drop(['prnameFR'], axis=1, inplace=True)
 
 # Esnure to remove any rows that contain nan values so we have a populated dataset to work with remaining after.
 merge_hospital_infobase_vaccine.dropna(axis=0, how='any', inplace=True)
-merge_hospital_infobase_vaccine.to_csv('combined-dataset.csv')
-
+merge_hospital_infobase_vaccine.to_csv('combined-dataset.csv', index=False)
 
 
 #df.to_csv('file_name.csv', index=False)
