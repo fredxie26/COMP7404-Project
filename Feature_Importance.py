@@ -22,10 +22,7 @@ def data_preprocessing():
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
 
-
     X = pd.get_dummies(X, columns=["prname"])
-
-
 
     return (X, y)
 
