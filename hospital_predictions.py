@@ -5,6 +5,7 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import Ridge
 
 # CONSTANTS
 HOSPITAL_DATASET_FILENAME = "covid19-epiSummary-hospVentICU.csv"
@@ -36,6 +37,7 @@ def main():
     X, y = data_preprocessing()
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_RATIO, random_state=RANDOM_STATE)
     print("Linear Regression Coefficient of Determination: ", score_regression(LinearRegression(), X_train, y_train, X_test, y_test))
+    print("Ridge Regression Coefficient of Determination: ", score_regression(Ridge(), X_train, y_train, X_test, y_test))
     print("Multi-layer Perceptron Regression Coefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=500), X_train, y_train, X_test, y_test))
 
 
