@@ -12,17 +12,21 @@ from sklearn.linear_model import Ridge
 
 HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
 
+
 def data_preprocessing():
     hospital_data = pd.read_csv(HOSPITAL_DATASET_FILENAME)
-
     # removing dates
     hospital_data.drop("date", axis='columns', inplace=True)
+    hospital_data.drop("as_of_date", axis='columns', inplace=True)
 
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
 
-    enc = OneHotEncoder()
-    X = enc.fit_transform(X)
+
+    X = pd.get_dummies(X, columns=["prname"])
+
+
+
     return (X, y)
 
 
@@ -30,11 +34,13 @@ def feature_importance(model, X, y):
     model.fit(X, y)
     importance = model.coef_
     # summarize feature importance
+
     for i, v in enumerate(importance):
-        print('Feature: %0d, Score: %.5f' % (i, v))
+        print('Feature: {}, Score: {:4f}'.format(list(X)[i], v))
     # plot feature importance
     plt.bar([x for x in range(len(importance))], importance)
     plt.show()
+
     return model
 
 
