@@ -33,6 +33,12 @@ def score_regression(model, X_train, y_train, X_test, y_test):
     return model.score(X_test, y_test)
 
 
+def predict_regression(model, X_train, y_train, X_test):
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    return y_pred
+
+
 def main():
     X, y = data_preprocessing()
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_RATIO, random_state=RANDOM_STATE)
