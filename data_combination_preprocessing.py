@@ -14,6 +14,9 @@ merge_hospital_infobase_vaccine.drop(['numdelta_all_distributed','numdelta_pfize
 'numdelta_pfizerbiontech_5_11_distributed','numdelta_moderna_distributed','numdelta_astrazeneca_distributed',
 'numdelta_janssen_distributed','numdelta_novavax_distributed'], axis=1, inplace=True)
 
+# Also dropping french province names, we don't need em
+merge_hospital_infobase_vaccine.drop(['prnameFR'], axis=1, inplace=True)
+
 # Esnure to remove any rows that contain nan values so we have a populated dataset to work with remaining after.
 merge_hospital_infobase_vaccine.dropna(axis=0, how='any', inplace=True)
 merge_hospital_infobase_vaccine.to_csv('combined-dataset.csv')
