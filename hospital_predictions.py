@@ -19,15 +19,30 @@ RANDOM_STATE = 42
 # with X being a data frame with features used for input and y being the output
 def data_preprocessing():
     hospital_data = pd.read_csv(HOSPITAL_DATASET_FILENAME)
-
     # removing dates
-    hospital_data.drop("date", axis='columns', inplace=True)
+    hospital_data.drop(["date", "as_of_date"], axis='columns', inplace=True)
 
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
 
-    enc = OneHotEncoder()
-    X = enc.fit_transform(X)
+    X = pd.get_dummies(X, columns=["prname"])
+    """ 
+    # removing bad features
+    X.drop(["reporting_week",
+            "numcases_total",
+            "numcases_weekly",
+            "ratecases_total",
+            "numdeaths_last14",
+            "ratedeaths_last14",
+            "avgincidence_last7",
+            "avgdeaths_last7",
+            "avgratedeaths_last7",
+            "numtotal_all_distributed",
+            "prname_British Columbia",
+            "prname_Canada",
+            "prname_Ontario",
+            "prname_Quebec"], axis='columns', inplace=True)
+    """
     return (X, y)
 
 
@@ -50,6 +65,7 @@ def main():
     print("Ridge Regression Coefficient of Determination: ", score_regression(Ridge(), X_train, y_train, X_test, y_test))
     print("Multi-layer Perceptron Regression Coefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=500), X_train, y_train, X_test, y_test))
     #print(predict_regression(LinearRegression(), X_train, y_train, X_test))
+
 
 if __name__ == "__main__":
     main()
