@@ -24,7 +24,28 @@ def data_preprocessing():
 
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
+
     
+    # Removing bad features for linear regression
+    X.drop([
+        "numcases_total",
+        "numdeaths_weekly",
+        "ratedeaths_total",
+        "ratecases_last7",
+        "ratedeaths_last7",
+        "numcases_last14",
+        "numdeaths_last14",
+        "avgcases_last7",
+        "avgincidence_last7",
+        "avgratedeaths_last7",
+        "numtotal_pfizerbiontech_distributed",
+        "numtotal_pfizerbiontech_5_11_distributed",
+        "numtotal_moderna_distributed",
+        "numtotal_astrazeneca_distributed",
+        "numtotal_janssen_distributed",
+        "numtotal_novavax_distributed",
+    ], axis='columns', inplace=True)
+
     return (X, y)
 
 
@@ -45,7 +66,7 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_RATIO, random_state=RANDOM_STATE)
     print("Linear Regression Coefficient of Determination: ", score_regression(LinearRegression(), X_train, y_train, X_test, y_test))
     print("Ridge Regression Coefficient of Determination: ", score_regression(Ridge(), X_train, y_train, X_test, y_test))
-    print("Multi-layer Perceptron Regression Coefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=500), X_train, y_train, X_test, y_test))
+    print("Multi-layer Perceptron Regression Coefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=5000), X_train, y_train, X_test, y_test))
     #print(predict_regression(LinearRegression(), X_train, y_train, X_test))
 
 
