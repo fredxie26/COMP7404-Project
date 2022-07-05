@@ -25,7 +25,6 @@ def data_preprocessing():
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
 
-    
     # Removing bad features for linear regression
     X.drop([
         "numcases_total",
@@ -44,6 +43,15 @@ def data_preprocessing():
         "numtotal_astrazeneca_distributed",
         "numtotal_janssen_distributed",
         "numtotal_novavax_distributed",
+    ], axis='columns', inplace=True)
+
+    # 2nd iteration of feature importance
+    X.drop([
+        "reporting_week",
+        "reporting_year",
+        "numcases_weekly",
+        "ratedeaths_last14",
+        "numtotal_all_distributed",
     ], axis='columns', inplace=True)
 
     return (X, y)
