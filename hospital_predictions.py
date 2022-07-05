@@ -24,8 +24,8 @@ def data_preprocessing():
 
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
+    
 
-    X = pd.get_dummies(X, columns=["prname"])
     """ 
     # removing bad features
     X.drop(["reporting_week",
@@ -43,6 +43,7 @@ def data_preprocessing():
             "prname_Ontario",
             "prname_Quebec"], axis='columns', inplace=True)
     """
+    
     return (X, y)
 
 
