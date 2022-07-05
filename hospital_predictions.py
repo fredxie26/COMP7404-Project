@@ -25,25 +25,6 @@ def data_preprocessing():
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
     
-
-    """ 
-    # removing bad features
-    X.drop(["reporting_week",
-            "numcases_total",
-            "numcases_weekly",
-            "ratecases_total",
-            "numdeaths_last14",
-            "ratedeaths_last14",
-            "avgincidence_last7",
-            "avgdeaths_last7",
-            "avgratedeaths_last7",
-            "numtotal_all_distributed",
-            "prname_British Columbia",
-            "prname_Canada",
-            "prname_Ontario",
-            "prname_Quebec"], axis='columns', inplace=True)
-    """
-    
     return (X, y)
 
 
