@@ -24,7 +24,31 @@ merge_hospital_infobase_vaccine.drop(['prnameFR'], axis=1, inplace=True)
 
 # Esnure to remove any rows that contain nan values so we have a populated dataset to work with remaining after.
 merge_hospital_infobase_vaccine.dropna(axis=0, how='any', inplace=True)
+
+# Remove any province specific data, we want the dataset to reflect canada-wide statistics only
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("British Columbia") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Alberta") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Saskatchewan") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Manitoba") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Ontario") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Quebec") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Newfoundland and Labrador") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("New Brunswick") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Nova Scotia") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Prince Edward Island") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Yukon") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Northwest Territories") == False]
+merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Nunavut") == False]
+
+# Removing any columns that contain all 1s or all 0s as they do not help the model to predict our goal
+merge_hospital_infobase_vaccine.drop(['pruid_x'], axis=1, inplace=True)
+merge_hospital_infobase_vaccine.drop(['update'], axis=1, inplace=True)
+merge_hospital_infobase_vaccine.drop(['pruid_y'], axis=1, inplace=True)
+merge_hospital_infobase_vaccine.drop(['updated'], axis=1, inplace=True)
+
+# Print to csv
 merge_hospital_infobase_vaccine.to_csv('combined-dataset.csv', index=False)
+
 
 
 #df.to_csv('file_name.csv', index=False)
