@@ -22,6 +22,33 @@ def data_preprocessing():
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
 
+    X.drop([
+        "numcases_total",
+        "numdeaths_weekly",
+        "ratedeaths_total",
+        "ratecases_last7",
+        "ratedeaths_last7",
+        "numcases_last14",
+        "numdeaths_last14",
+        "avgcases_last7",
+        "avgincidence_last7",
+        "avgratedeaths_last7",
+        "numtotal_pfizerbiontech_distributed",
+        "numtotal_pfizerbiontech_5_11_distributed",
+        "numtotal_moderna_distributed",
+        "numtotal_astrazeneca_distributed",
+        "numtotal_janssen_distributed",
+        "numtotal_novavax_distributed",
+    ], axis='columns', inplace=True)
+
+    # 2nd iteration of feature importance
+    X.drop([
+        "reporting_week",
+        "reporting_year",
+        "numcases_weekly",
+        "ratedeaths_last14",
+        "numtotal_all_distributed",
+    ], axis='columns', inplace=True)
 
     return (X, y)
 
