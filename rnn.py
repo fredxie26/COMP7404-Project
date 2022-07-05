@@ -16,13 +16,17 @@ HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
 
 def data_preprocessing():
 	hospital_data = pd.read_csv(HOSPITAL_DATASET_FILENAME)
+	hospital_data = hospital_data.loc[hospital_data['prname'] == 'Canada']
 	# removing dates
+	# print(hospital_data)
 	hospital_data.drop(["date", "as_of_date"], axis='columns', inplace=True)
 
 	X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
 	y = hospital_data.loc[:, "COVID_HOSP"]
-
-	X = pd.get_dummies(X, columns=["prname"])
+	y = np.where(y < 5000, 1, y)
+	y = np.where(y >= 5000, 2, y)
+	# print(y)
+	X = pd.get_dummies(X, columns=["prname", "numcases_weekly", "numdeaths_weekly", "numtotal_all_distributed", ])
 	""" 
     # removing bad features
     X.drop(["reporting_week",
@@ -80,7 +84,7 @@ def train_model(
 		test_labels=None,
 		lr=0.01
 ):
-	loss_fn = torch.nn.MSELoss(reduction='sum')
+	loss_fn = torch.nn.MSELoss()
 	optimiser = torch.optim.Adam(model.parameters(), lr=lr)
 	num_epochs = 60
 	train_hist = np.zeros(num_epochs)
@@ -134,7 +138,7 @@ def covid_model_train(seq_length=42, hidden_dim=10, n_layer=2, lr=0.01):
 	)
 
 def main():
-	covid_model_train(seq_length=42, hidden_dim=10, n_layer=2, lr=0.01)
+	covid_model_train(seq_length=234, hidden_dim=10, n_layer=2, lr=0.01)
 
 if __name__ == "__main__":
 	main()
