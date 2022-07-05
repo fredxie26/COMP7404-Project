@@ -40,6 +40,9 @@ merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital
 merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Northwest Territories") == False]
 merge_hospital_infobase_vaccine = merge_hospital_infobase_vaccine[merge_hospital_infobase_vaccine["prname"].str.contains("Nunavut") == False]
 
+# now that all the entries are canada specific remove the prname column as it serves no purpose to distinguish rows by province.
+merge_hospital_infobase_vaccine.drop(['prname'], axis=1, inplace=True)
+
 # Removing any columns that contain all 1s or all 0s as they do not help the model to predict our goal
 merge_hospital_infobase_vaccine.drop(['pruid_x'], axis=1, inplace=True)
 merge_hospital_infobase_vaccine.drop(['update'], axis=1, inplace=True)
