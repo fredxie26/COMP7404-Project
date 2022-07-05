@@ -16,7 +16,6 @@ HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
 
 def data_preprocessing():
 	hospital_data = pd.read_csv(HOSPITAL_DATASET_FILENAME)
-	hospital_data = hospital_data.loc[hospital_data['prname'] == 'Canada']
 	# removing dates
 	# print(hospital_data)
 	hospital_data.drop(["date", "as_of_date"], axis='columns', inplace=True)
@@ -26,24 +25,8 @@ def data_preprocessing():
 	y = np.where(y < 5000, 1, y)
 	y = np.where(y >= 5000, 2, y)
 	# print(y)
-	X = pd.get_dummies(X, columns=["prname", "numcases_weekly", "numdeaths_weekly", "numtotal_all_distributed", ])
-	""" 
-    # removing bad features
-    X.drop(["reporting_week",
-            "numcases_total",
-            "numcases_weekly",
-            "ratecases_total",
-            "numdeaths_last14",
-            "ratedeaths_last14",
-            "avgincidence_last7",
-            "avgdeaths_last7",
-            "avgratedeaths_last7",
-            "numtotal_all_distributed",
-            "prname_British Columbia",
-            "prname_Canada",
-            "prname_Ontario",
-            "prname_Quebec"], axis='columns', inplace=True)
-    """
+	X = pd.get_dummies(X, columns=["numcases_weekly", "numdeaths_weekly", "numtotal_all_distributed", ])
+
 	return (X, y)
 
 class Covid_LSTM(torch.nn.Module) :
@@ -138,7 +121,7 @@ def covid_model_train(seq_length=42, hidden_dim=10, n_layer=2, lr=0.01):
 	)
 
 def main():
-	covid_model_train(seq_length=234, hidden_dim=10, n_layer=2, lr=0.01)
+	covid_model_train(seq_length=230, hidden_dim=10, n_layer=2, lr=0.01)
 
 if __name__ == "__main__":
 	main()
