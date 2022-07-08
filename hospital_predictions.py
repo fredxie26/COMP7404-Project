@@ -7,6 +7,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import Ridge
+# from mlxtend.evaluate import bias_variance_decomp
 
 # CONSTANTS
 HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
@@ -72,6 +73,12 @@ def predict_regression(model, X_train, y_train, X_test):
 def main():
     X, y = data_preprocessing()
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_RATIO, random_state=RANDOM_STATE)
+    # mse, bias, var = bias_variance_decomp(LinearRegression(), X_train.values, y_train.values, X_test.values, y_test.values, loss='mse', num_rounds=200,
+    #                                       random_seed=1)
+    # # summarize results
+    # print('MSE: %.3f' % mse)
+    # print('Bias: %.3f' % bias)
+    # print('Variance: %.3f' % var)
     print("Linear Regression Coefficient of Determination: ", score_regression(LinearRegression(), X_train, y_train, X_test, y_test))
     print("Ridge Regression Coefficient of Determination: ", score_regression(Ridge(), X_train, y_train, X_test, y_test))
     print("Multi-layer Perceptron Regression Coefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=5000), X_train, y_train, X_test, y_test))
