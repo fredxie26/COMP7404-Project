@@ -1,28 +1,7 @@
 import pandas as pd
 import datetime
 
-# Function to insert row in a dataframe at desired location based from --> https://www.geeksforgeeks.org/insert-row-at-given-position-in-pandas-dataframe/
-def Insert_row(row_number, df, new_entries_to_insert):
-    # Slice the upper half of the dataframe
-    upper = df[0:row_number]
-    upper.to_csv('test-upper.csv', index=False)
-    # Store the result of lower half of the dataframe
-    lower = df[row_number:]
-    lower.to_csv('test-lower.csv', index=False)
-    exit()
-  
-    # Insert the row in the upper half dataframe
-    #pd.concat([upper, new_entries_to_insert])
-  
-    # Concat the two dataframes
-    #df_result = pd.concat([upper, lower])
-  
-    # Reassign the index labels
-    #df_result.index = [*range(df_result.shape[0])]
-  
-    # Return the updated dataframe
-    #return df_result
-
+# import separate raw data sets
 hospital_vent_icu_data = pd.read_csv("datasets/covid19-epiSummary-hospVentICU.csv")
 public_infobase_data = pd.read_csv("datasets/covid19-public-infobase.csv")
 vaccine_distribution_data = pd.read_csv("datasets/covid19-vaccination-distribution.csv")
@@ -63,40 +42,36 @@ vaccine_distribution_data = vaccine_distribution_data[vaccine_distribution_data[
 vaccine_distribution_data = vaccine_distribution_data[vaccine_distribution_data["prname"].str.contains("Nunavut") == False]
 vaccine_distribution_data = vaccine_distribution_data[vaccine_distribution_data["prname"].str.contains("Federal allocation") == False]
 
-# Before we merge the datasets based on date we have to adjust the weekly averages in the public infobase to be daily instead
-# so we have more data to work with from the other datasets after merging instead of being restricted by weekly dates from the public infobase.
-# Attempting to do so by slicing when a new weekly entry date is encountered, generating 6 more entries with the same row information 
-# but with adjusted date according to the 6 days preceding the original average entry in order to mimick daily entries of the averaged data.
+# Before we merge the datasets based on date we have to adjust the weekly averages in the public infobase to be daily instead so that we
+# have more data to work with from the other datasets after merging instead of being restricted by weekly dates from the public infobase.
+# Attempting to do so by generating 6 new rows for each row in the original infobase dataset, these rows will have the same values but
+# with adjusted date according to the 6 days preceding the original row's entry date in order to mimick daily entries of the averaged data.
+public_infobase_data.to_csv('test-test.csv', index=False)
 
-# Set a minimum date to begin comparison against as iteration continues
-lastdate = datetime.datetime.min
-#public_infobase_data.to_csv('test-test.csv', index=False)
+# Used to hold newly generated entries before they are appended to original dataset
+new_entries_list = []
 
 # We can use iterrows to iterate over a dataframe by row
+# Generate new rows to represent daily entries based on each row of weekly average entry from original dataset
 for num, row in public_infobase_data.iterrows():
-    # Extract date from current row into a datetime object, date is the 4th item in a row
-    currdate = datetime.datetime.strptime(row[3], '%Y-%m-%d')
-    #print("CURR DATE: ", currdate, " ----------------------------------------------------------------------------------------------------")
-    # Check if we found a new date while iterating, this is the starting point to make 6 preceding days to represent the full week of daily entries
-    if currdate >= lastdate:
-        # update the lastdate value for next loop
-        lastdate = currdate
-        # Generate 6 entries based on currdate and store them in a temporary list to be converted to a dataframe and added to the original dataset
-        templist = []
-        N = 6
-        for n in reversed(range(N)):
-            n += 1
-            temprow = row.copy(deep=True)
-            # temprow[3] is the entry date of the row in string format, need to change to datetime to apply day adjustment then back to string
-            tempdate = datetime.datetime.strptime(temprow[3], '%Y-%m-%d')
-            tempdate = tempdate - datetime.timedelta(days=n) # adjust the date relative to the original to represent preceding dates
-            temprow[3] = tempdate.strftime('%Y-%m-%d') # back to string
-            templist.append(temprow) # save to list to be injected into dataframe later
-        
-        # We now have a list of pandas series objects, with each object representing a row for a daily entry preceding the original entry
-        new_daily_entries = pd.DataFrame(templist)
-        # add the new entries into the original dataset.
+    # Generate 6 entries based on the current row's date and add them to a list so it can be converted to a dataframe and appended to original data later.
+    N = 6
+    for n in reversed(range(N)):
+        n += 1
+        temprow = row.copy(deep=True)
+        # temprow[3] is the entry date of the row in string format, need to change to a datetime object to apply day adjustment then back to string
+        tempdate = datetime.datetime.strptime(temprow[3], '%Y-%m-%d')
+        tempdate = tempdate - datetime.timedelta(days=n) # adjust the date relative to the original row's date to represent preceding dates
+        temprow[3] = tempdate.strftime('%Y-%m-%d') # back to string
+        new_entries_list.append(temprow) # add to list of new entries
+    
+# We now have a list of pandas series objects, with each object representing a row for a daily entry preceding the original entry
+new_daily_entries = pd.DataFrame(new_entries_list)
+# add the new entries into the original dataset and resort by date
+public_infobase_data = pd.concat([public_infobase_data, new_daily_entries])
+public_infobase_data = public_infobase_data.sort_values(by=['date'])
 
+# print test
 public_infobase_data.to_csv('test-post-daily-adjust.csv', index=False)
 
 # Merging the data sets based on date, only entires that share a date will exist in the final merged set, those that do not will be dropped
