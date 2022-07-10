@@ -8,6 +8,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import Ridge
 from mlxtend.evaluate import bias_variance_decomp
+from sklearn.preprocessing import StandardScaler
 
 # CONSTANTS
 HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
@@ -29,6 +30,12 @@ def data_preprocessing():
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
 
+    X.drop(['numdeaths_weekly', 'avgratedeaths_last7', 'numtotal_janssen_distributed', 'numtotal_novavax_distributed'], axis='columns', inplace=True)
+
+    scaler = StandardScaler()
+    X = scaler.fit_transform(X)
+    
+
     return (X, y)
 
 
@@ -48,25 +55,25 @@ def main():
     X, y = data_preprocessing()
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_RATIO, random_state=RANDOM_STATE)
     print("Linear Regression\nCoefficient of Determination: ", score_regression(LinearRegression(), X_train, y_train, X_test, y_test))
-    mse, bias, var = bias_variance_decomp(LinearRegression(), X_train.values, y_train.values, X_test.values, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
+    mse, bias, var = bias_variance_decomp(LinearRegression(), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
     print('MSE: %.3f' % mse)
     print('Bias: %.3f' % bias)
     print('Variance: %.3f\n' % var)
     
     print("Ridge Regression\nCoefficient of Determination: ", score_regression(Ridge(), X_train, y_train, X_test, y_test))
-    mse, bias, var = bias_variance_decomp(Ridge(), X_train.values, y_train.values, X_test.values, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
+    mse, bias, var = bias_variance_decomp(Ridge(), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
     print('MSE: %.3f' % mse)
     print('Bias: %.3f' % bias)
     print('Variance: %.3f\n' % var)
 
     
-    """
+    
     print("Multi-layer Perceptron Regression\nCoefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=5000), X_train, y_train, X_test, y_test))
-    mse, bias, var = bias_variance_decomp(MLPRegressor(random_state=RANDOM_STATE, max_iter=5000), X_train.values, y_train.values, X_test.values, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
+    mse, bias, var = bias_variance_decomp(MLPRegressor(random_state=RANDOM_STATE, max_iter=50000), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
     print('MSE: %.3f' % mse)
     print('Bias: %.3f' % bias)
     print('Variance: %.3f\n' % var)
-    """
+    
 
 
 

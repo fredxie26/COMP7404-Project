@@ -8,10 +8,12 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import Ridge
-
+from sklearn.preprocessing import StandardScaler
 
 HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
-FEATURE_THRESHOLD = 10
+FEATURE_THRESHOLD = 5000 #list all features below this threshold
+
+column_names = []
 
 def data_preprocessing():
     hospital_data = pd.read_csv(HOSPITAL_DATASET_FILENAME)
@@ -23,6 +25,11 @@ def data_preprocessing():
 
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
+    global column_names
+    column_names = list(X)
+
+    scaler = StandardScaler()
+    X = scaler.fit_transform(X)
 
     
 
@@ -35,9 +42,9 @@ def feature_importance(model, X, y):
     # summarize feature importance
     unimportant_features = []
     for i, v in enumerate(coeficients):
-        print('Feature: {}, Coefficient: {:4f}'.format(list(X)[i], v))
+        print('Feature: {}, Coefficient: {:4f}'.format(column_names[i], v))
         if (abs(v) < FEATURE_THRESHOLD):
-            unimportant_features.append(list(X)[i])
+            unimportant_features.append(column_names[i])
     # plot feature importance
     print(unimportant_features)
     plt.bar([x for x in range(len(coeficients))], coeficients)
