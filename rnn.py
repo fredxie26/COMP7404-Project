@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch
 import sys
 from sklearn.model_selection import train_test_split
-
+from sklearn.preprocessing import StandardScaler
 from torch.autograd import Variable
 from torch.utils.data.dataset import random_split
 from torch.utils.data import TensorDataset, Dataset, DataLoader
@@ -17,16 +17,19 @@ HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
 def data_preprocessing():
 	hospital_data = pd.read_csv(HOSPITAL_DATASET_FILENAME)
 	# removing dates
-	# print(hospital_data)
-	hospital_data.drop(["date", "as_of_date"], axis='columns', inplace=True)
+	hospital_data.drop("date", axis='columns', inplace=True)
+	hospital_data.drop("as_of_date", axis='columns', inplace=True)
+	hospital_data.drop("reporting_week", axis='columns', inplace=True)
+	hospital_data.drop("reporting_year", axis='columns', inplace=True)
 
 	X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
 	y = hospital_data.loc[:, "COVID_HOSP"]
 	y = np.where(y < 5000, 1, y)
 	y = np.where(y >= 5000, 2, y)
-	# print(y)
-	X = pd.get_dummies(X, columns=["numcases_weekly", "numdeaths_weekly", "numtotal_all_distributed", ])
+	X.drop(['numdeaths_weekly', 'avgratedeaths_last7', 'numtotal_janssen_distributed', 'numtotal_novavax_distributed'], axis='columns', inplace=True)
 
+	scaler = StandardScaler()
+	X = scaler.fit_transform(X)
 	return (X, y)
 
 class Covid_LSTM(torch.nn.Module) :
@@ -69,7 +72,7 @@ def train_model(
 ):
 	loss_fn = torch.nn.MSELoss()
 	optimiser = torch.optim.Adam(model.parameters(), lr=lr)
-	num_epochs = 60
+	num_epochs = 100
 	train_hist = np.zeros(num_epochs)
 	test_hist = np.zeros(num_epochs)
 	for t in range(num_epochs):
@@ -121,7 +124,7 @@ def covid_model_train(seq_length=42, hidden_dim=10, n_layer=2, lr=0.01):
 	)
 
 def main():
-	covid_model_train(seq_length=230, hidden_dim=10, n_layer=2, lr=0.01)
+	covid_model_train(seq_length=19, hidden_dim=128, n_layer=2, lr=0.0001)
 
 if __name__ == "__main__":
 	main()
