@@ -75,16 +75,6 @@ def main():
     print('MSE: %.3f' % mse)
     print('Bias: %.3f' % bias)
     print('Variance: %.3f\n' % var)
-
-
-    print("Lasso Regression\nCoefficient of Determination: ", score_regression(Lasso(), X_train, y_train, X_test, y_test))
-    #mse, bias, var = bias_variance_decomp(Lasso(), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
-    #print('MSE: %.3f' % mse)
-    #print('Bias: %.3f' % bias)
-    #print('Variance: %.3f\n' % var)
-
-
-    print()
     
     
     print("Multi-layer Perceptron Regression\nCoefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=5000), X_train, y_train, X_test, y_test))
