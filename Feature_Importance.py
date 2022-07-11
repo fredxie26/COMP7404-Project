@@ -11,7 +11,7 @@ from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
 
 HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
-FEATURE_THRESHOLD = 5000 #list all features below this threshold
+FEATURE_THRESHOLD = 0 #list all features below this threshold
 
 column_names = []
 
