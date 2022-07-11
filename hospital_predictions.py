@@ -32,7 +32,7 @@ def data_preprocessing():
     X = hospital_data.drop("COVID_HOSP", axis="columns", inplace=False)
     y = hospital_data.loc[:, "COVID_HOSP"]
 
-    X.drop(['numdeaths_weekly', 'avgratedeaths_last7', 'numtotal_janssen_distributed', 'numtotal_novavax_distributed'], axis='columns', inplace=True)
+    #X.drop(['numdeaths_weekly', 'avgratedeaths_last7', 'numtotal_janssen_distributed', 'numtotal_novavax_distributed'], axis='columns', inplace=True)
 
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
