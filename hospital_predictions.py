@@ -9,9 +9,11 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import Ridge
 from mlxtend.evaluate import bias_variance_decomp
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import Lasso
+from sklearn.tree import DecisionTreeRegressor
 
 # CONSTANTS
-HOSPITAL_DATASET_FILENAME = "combined-dataset.csv"
+HOSPITAL_DATASET_FILENAME = "combined-dataset-old.csv"
 TRAIN_RATIO = 0.75
 RANDOM_STATE = 42
 
@@ -66,13 +68,36 @@ def main():
     print('Bias: %.3f' % bias)
     print('Variance: %.3f\n' % var)
 
-    
-    
-    print("Multi-layer Perceptron Regression\nCoefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=5000), X_train, y_train, X_test, y_test))
-    mse, bias, var = bias_variance_decomp(MLPRegressor(random_state=RANDOM_STATE, max_iter=50000), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
+    print("Linear Regression\nCoefficient of Determination: ", score_regression(LinearRegression(), X_train, y_train, X_test, y_test))
+    mse, bias, var = bias_variance_decomp(LinearRegression(), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
     print('MSE: %.3f' % mse)
     print('Bias: %.3f' % bias)
     print('Variance: %.3f\n' % var)
+
+    X, y = data_preprocessing()
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_RATIO, random_state=RANDOM_STATE)
+    print("Decision Tree Regression\nCoefficient of Determination: ", score_regression(DecisionTreeRegressor(max_depth=2), X_train, y_train, X_test, y_test))
+    mse, bias, var = bias_variance_decomp(DecisionTreeRegressor(max_depth=2), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
+    print('MSE: %.3f' % mse)
+    print('Bias: %.3f' % bias)
+    print('Variance: %.3f\n' % var)
+
+
+    print("Lasso Regression\nCoefficient of Determination: ", score_regression(Lasso(), X_train, y_train, X_test, y_test))
+    #mse, bias, var = bias_variance_decomp(Lasso(), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
+    #print('MSE: %.3f' % mse)
+    #print('Bias: %.3f' % bias)
+    #print('Variance: %.3f\n' % var)
+
+
+
+    
+    
+    print("Multi-layer Perceptron Regression\nCoefficient of Determination: ", score_regression(MLPRegressor(random_state=RANDOM_STATE, max_iter=5000), X_train, y_train, X_test, y_test))
+    #mse, bias, var = bias_variance_decomp(MLPRegressor(random_state=RANDOM_STATE, max_iter=5000), X_train, y_train.values, X_test, y_test.values, loss='mse', num_rounds=200, random_seed=RANDOM_STATE)
+    #print('MSE: %.3f' % mse)
+    #print('Bias: %.3f' % bias)
+    #print('Variance: %.3f\n' % var)
     
 
 
